@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roboflow Segmentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+        #output-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload Image for Segmentation</h2>
+    
+    <input type="file" id="imageInput" accept="image/*">
+    <button onclick="uploadImage()">Upload & Process</button>
+    
+    <div id="output-container">
+        <h3>Segmented Output:</h3>
+        <img id="outputImage" src="" alt="Output will appear here">
+    </div>
+
+    <script>
+        function uploadImage() {
+            const input = document.getElementById("imageInput");
+            if (!input.files.length) {
+                alert("Please select an image!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", input.files[0]);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("outputImage").src = data.imageUrl;
+                    document.getElementById("output-container").style.display = "block";
+                } else {
+                    alert("Failed to process image.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
